@@ -224,8 +224,6 @@ mentions %>%
         x ="Mentioned Accounts", y = "Number of Occurence")+
   theme(legend.position = "none")
 
-ggsave("mentsions_jeep.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 
 # Barplot Top 10 Hashtags
 excluded_hashtags <- c("jeep|commercial|ad|im|superbowl|sbliv")
@@ -238,8 +236,6 @@ hashtags %>%
   labs(title="Top 10 Used Hashtags; Brand: Jeep",
         x ="Hashtags", y = "Number of Occurence")+
   theme(legend.position = "none")
-
-ggsave("hashtags_jeep.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
 
 
 # Barplot Top 10 Words
@@ -254,8 +250,6 @@ jeep_words_arranged %>%
         x ="Word", y = "Number of Occurence")+
   theme(legend.position = "none")
 
-ggsave("words_jeep.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 
 # Barplot Top 10 Bigrams
 jeep_bigrams_arranged %>%
@@ -269,22 +263,16 @@ jeep_bigrams_arranged %>%
   theme(legend.position = "none")
 
 
-ggsave("word-pairs_jeep.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 wordcloud_data <- tidy_tweets_stemmed %>% 
     filter(ifelse(str_detect(text, excluded_words) == TRUE, FALSE, TRUE))
 
 create_wordcloud(wordcloud_data)
 
 
-#ggsave("wordcloud_jeep.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 
 tidy_tweets_stemmed %>% 
     filter(ifelse(str_detect(text, excluded_words) == TRUE, FALSE, TRUE)) %>% 
   create_topicmodel(beschriftung="Topicmodel; Brand: Jeep")
-
-ggsave("topicmodel_jeep.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
 
 ```
 
