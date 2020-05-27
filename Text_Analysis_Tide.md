@@ -18,7 +18,8 @@ sb_20_red <- read.csv("2020-dataset-reduced-columns.csv", stringsAsFactors = FAL
 ```
 
 
-**Creating Functions for Plotting**
+**Creating Functions for Plotting**\
+*Wordcloud*
 ```{r wordcloud}
 
 create_wordcloud <- function(x)
@@ -42,6 +43,7 @@ create_wordcloud <- function(x)
 
 ```
 
+*Topic Model*
 ```{r topicmodel}
 
 create_topicmodel <- function(x, beschriftung)
@@ -97,7 +99,7 @@ tide <- sb_20_red %>%
 
 ```
 
-**Data Cleaning**
+**Text Cleaning**
 ```{r data cleaning}
 
 # regex for parsing tweets
@@ -117,7 +119,7 @@ words <- words %>%
 
 ```
 
-**Data separation**
+**Text separation**
 ```{r data separation}
 
 # selection mentions
