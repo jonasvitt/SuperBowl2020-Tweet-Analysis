@@ -1,14 +1,3 @@
----
-title: "Sentiment Analysis Google"
-author: "Jonas Vitt"
-date: "2/5/2020"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 # Initialization
 
 **Loading Packages**
@@ -25,12 +14,13 @@ library(SnowballC)
 
 
 #sb_20 <- read.csv("flat_sb_2020.csv", stringsAsFactors = FALSE)
-#sb_20_red <- read.csv("2020-dataset-reduced-columns.csv", stringsAsFactors = FALSE)
+sb_20_red <- read.csv("2020-dataset-reduced-columns.csv", stringsAsFactors = FALSE)
 
 ```
 
 
-**Creating Functions for Plotting**
+**Creating Functions for Plotting**\
+*Wordcloud*
 ```{r wordcloud}
 
 create_wordcloud <- function(x)
@@ -54,6 +44,7 @@ create_wordcloud <- function(x)
 
 ```
 
+*Topic Model*
 ```{r topicmodel}
 
 create_topicmodel <- function(x, beschriftung)
@@ -100,6 +91,7 @@ create_topicmodel <- function(x, beschriftung)
 # Analysis
 
 ## Data Cleaning
+**Filter for brand name**
 ```{r filtering for brands}
 #head(sb_20)
 #str(sb_20)
@@ -110,6 +102,7 @@ google <- sb_20_red %>%
 
 ```
 
+**Text Cleaning**
 ```{r data cleaning}
 
 # regex for parsing tweets
@@ -130,6 +123,7 @@ words <- words %>%
 
 ```
 
+**Text separation**
 ```{r data separation}
 
 # selection mentions
@@ -151,7 +145,9 @@ hashtags <- words  %>%
 # removing hashtags and mentions from data set
 words_clean <- words %>% 
   filter(ifelse(startsWith(word,"@") == TRUE, FALSE, TRUE), ifelse(startsWith(word,"#") == TRUE, FALSE, TRUE))
+```
 
+```{r}
 # stemming the words
 system.time(
   words_clean_stemmed <-words_clean %>%
@@ -191,6 +187,7 @@ bigrams <- bigrams %>%
 
 ```
 
+**Aggregating words and bigrams**
 ```{r aggregating words and bigrams}
 
 words_count <- words_clean_stemmed %>%
@@ -228,10 +225,8 @@ mentions %>%
   theme(legend.position = "none") + 
   theme_minimal()
 
-ggsave("mentsions_google.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 ```
-
+![mentsions_google](https://user-images.githubusercontent.com/63118478/83046959-f80aeb80-a004-11ea-88d3-d5996124a9a8.png)
 
 ### Barplot Top 10 Hashtags
 ```{r hashtags}
@@ -248,10 +243,8 @@ hashtags %>%
   theme(legend.position = "none") + 
   theme_minimal()
 
-ggsave("hashtags_google.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 ```
-
+![hashtags_google](https://user-images.githubusercontent.com/63118478/83046954-f7725500-a004-11ea-9cbb-2aad2d1cfd59.png)
 
 ### Barplot Top 10 Words
 ```{r words}
@@ -268,9 +261,8 @@ google_words_arranged %>%
   theme(legend.position = "none") + 
   theme_minimal()
 
-ggsave("words_google.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
 ```
-
+![words_google](https://user-images.githubusercontent.com/63118478/83046970-f9d4af00-a004-11ea-831c-26dcb00be510.png)
 
 ### Barplot Top 10 Bigrams
 ```{r bigrams}
@@ -286,10 +278,8 @@ google_bigrams_arranged %>%
   theme(legend.position = "none") + 
   theme_minimal()
 
-ggsave("word-pairs_google.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 ```
-
+![word-pairs_google](https://user-images.githubusercontent.com/63118478/83046968-f93c1880-a004-11ea-9090-22e96fb9cc51.png)
 
 ### Barplot Top 10 Words without 'Loretta'
 ```{r words_wo_loretta}
@@ -306,9 +296,8 @@ google_words_arranged %>%
   theme(legend.position = "none") + 
   theme_minimal()
 
-ggsave("words_google_without-loretta.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 ```
+![words_google_without-loretta](https://user-images.githubusercontent.com/63118478/83046972-f9d4af00-a004-11ea-8be0-396d61c36967.png)
 
 
 ### Wordcloud
@@ -318,10 +307,8 @@ wordcloud_data <- tidy_tweets_stemmed %>%
 
 create_wordcloud(wordcloud_data)
 
-#ggsave("wordcloud_google.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 ```
-
+![wordcloud_google](https://user-images.githubusercontent.com/63118478/83046964-f8a38200-a004-11ea-96fd-83180702ed00.png)
 
 ### Topic Model
 ```{r topic_model}
@@ -330,10 +317,6 @@ tidy_tweets_stemmed %>%
   create_topicmodel(beschriftung="Topic Model; Brand: Google") + 
   theme_minimal()
 
-ggsave("topicmodel_google.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
-
-
 ```
-
+![topicmodel_google](https://user-images.githubusercontent.com/63118478/83046962-f8a38200-a004-11ea-8351-08b47ec15bad.png)
 
