@@ -1,15 +1,3 @@
----
-title: "Sentiment Analysis Jeep"
-author: "Jonas Vitt"
-date: "2/5/2020"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-
 # Initialization
 
 **Loading Packages**
@@ -26,12 +14,13 @@ library(SnowballC)
 
 
 #sb_20 <- read.csv("flat_sb_2020.csv", stringsAsFactors = FALSE)
-#sb_20_red <- read.csv("2020-dataset-reduced-columns.csv", stringsAsFactors = FALSE)
+sb_20_red <- read.csv("2020-dataset-reduced-columns.csv", stringsAsFactors = FALSE)
 
 ```
 
 
 **Creating Functions for Plotting**
+*Wordcloud*
 ```{r wordcloud}
 
 create_wordcloud <- function(x)
@@ -55,6 +44,7 @@ create_wordcloud <- function(x)
 
 ```
 
+*Topic Model*
 ```{r topicmodel}
 
 create_topicmodel <- function(x, beschriftung)
@@ -101,6 +91,7 @@ create_topicmodel <- function(x, beschriftung)
 # Analysis
 
 ## Data Cleaning
+**Filter for brand name**
 ```{r filtering for brands}
 #head(sb_20)
 #str(sb_20)
@@ -111,6 +102,7 @@ jeep <- sb_20_red %>%
 
 ```
 
+**Text Cleaning**
 ```{r data cleaning}
 
 # regex for parsing tweets
@@ -131,6 +123,7 @@ words <- words %>%
 
 ```
 
+**Text separation**
 ```{r data separation}
 
 # selection mentions
@@ -152,7 +145,9 @@ hashtags <- words  %>%
 # removing hashtags and mentions from data set
 words_clean <- words %>% 
   filter(ifelse(startsWith(word,"@") == TRUE, FALSE, TRUE), ifelse(startsWith(word,"#") == TRUE, FALSE, TRUE))
+```
 
+```{r}
 # stemming the words
 system.time(
   words_clean_stemmed <-words_clean %>%
@@ -193,6 +188,7 @@ bigrams <- bigrams %>%
 
 ```
 
+**Aggregating words and bigrams**
 ```{r aggregating words and bigrams}
 
 words_count <- words_clean_stemmed %>%
@@ -229,10 +225,8 @@ mentions %>%
   theme(legend.position = "none") + 
   theme_minimal()
 
-ggsave("mentsions_jeep.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 ```
-
+![mentsions_jeep](https://user-images.githubusercontent.com/63118478/83046961-f80aeb80-a004-11ea-8e10-92f9fe9d54f9.png)
 
 ### Barplot Top 10 Hashtags
 ```{r hashtags}
@@ -249,10 +243,8 @@ hashtags %>%
   theme(legend.position = "none") + 
   theme_minimal()
 
-ggsave("hashtags_jeep.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 ```
-
+![hashtags_jeep](https://user-images.githubusercontent.com/63118478/83046958-f80aeb80-a004-11ea-8c0f-b8e61a333f62.png)
 
 ### Barplot Top 10 Words
 ```{r words}
@@ -269,10 +261,8 @@ jeep_words_arranged %>%
   theme(legend.position = "none") + 
   theme_minimal()
 
-ggsave("words_jeep.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 ```
-
+![words_jeep](https://user-images.githubusercontent.com/63118478/83046974-fa6d4580-a004-11ea-91c6-129128130ab1.png)
 
 ### Barplot Top 10 Bigrams
 ```{r bigrams}
@@ -288,11 +278,8 @@ jeep_bigrams_arranged %>%
   theme(legend.position = "none") + 
   theme_minimal()
 
-
-ggsave("word-pairs_jeep.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 ```
-
+![word-pairs_jeep](https://user-images.githubusercontent.com/63118478/83046969-f9d4af00-a004-11ea-9390-050af9066691.png)
 
 ### Wordcloud
 ```{r wordcloud}
@@ -301,11 +288,8 @@ wordcloud_data <- tidy_tweets_stemmed %>%
 
 create_wordcloud(wordcloud_data)
 
-
-ggsave("wordcloud_jeep.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 ```
-
+![wordcloud_jeep](https://user-images.githubusercontent.com/63118478/83046967-f93c1880-a004-11ea-84bb-f9af04ea976d.png)
 
 ### Topic Model
 ```{r topic_model}
@@ -314,7 +298,5 @@ tidy_tweets_stemmed %>%
   create_topicmodel(beschriftung="Topic Model; Brand: Jeep") + 
   theme_minimal()
 
-ggsave("topicmodel_jeep.png", path = "C:/Users/vittj/Box/R/2-Spring20/GameDay_Challenge/Graphs")
-
 ```
-
+![topicmodel_jeep](https://user-images.githubusercontent.com/63118478/83046963-f8a38200-a004-11ea-974b-364ca4b4fe51.png)
