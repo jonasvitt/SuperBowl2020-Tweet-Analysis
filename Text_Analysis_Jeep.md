@@ -1,4 +1,4 @@
-# Initialication
+# Initialization
 
 **Loading Packages**
 ```{r loading packages}
