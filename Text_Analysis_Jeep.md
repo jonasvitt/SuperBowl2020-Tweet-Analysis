@@ -19,7 +19,7 @@ sb_20_red <- read.csv("2020-dataset-reduced-columns.csv", stringsAsFactors = FAL
 ```
 
 
-**Creating Functions for Plotting**
+**Creating Functions for Plotting**\
 *Wordcloud*
 ```{r wordcloud}
 
