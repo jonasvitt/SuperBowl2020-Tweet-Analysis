@@ -279,7 +279,7 @@ create_wordcloud(wordcloud_data)
 ```{r}
 tidy_tweets_stemmed %>% 
     filter(ifelse(str_detect(text, excluded_words) == TRUE, FALSE, TRUE)) %>% 
-  create_topicmodel(beschriftung="Topicmodel; Brand: Tide") + 
+  create_topicmodel(beschriftung="Topic Model; Brand: Tide") + 
   theme_minimal()
 ```
-![topicmodel_tide](https://user-images.githubusercontent.com/63118478/82975126-decc5580-9f98-11ea-8e6e-24a69526f4f9.png)
+![topicmodel_tide](https://user-images.githubusercontent.com/63118478/82976544-99aa2280-9f9c-11ea-836e-7b382a8d0562.png)
