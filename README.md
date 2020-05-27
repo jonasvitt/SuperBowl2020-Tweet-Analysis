@@ -20,5 +20,5 @@ The teams where between three and four students. Together with my teammates Adam
 
 
 ## Organizer & Sponsors
-**Organizer:** Informations Systems department of the David Eccles School of Business at the University of Utah
+**Organizer:** Informations Systems department of the David Eccles School of Business at the University of Utah\
 **Sponsor:** Domo, Firetoss, Molio and ThomasArts.
