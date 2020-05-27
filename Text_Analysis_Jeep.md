@@ -273,7 +273,7 @@ wordcloud_data <- tidy_tweets_stemmed %>%
 
 create_wordcloud(wordcloud_data)
 ```
-![wordcloud_tide](https://user-images.githubusercontent.com/63118478/82974251-c3604b00-9f96-11ea-95dd-33ab8077997b.png)
+![wordcloud_tide](https://user-images.githubusercontent.com/63118478/82975867-d83edd80-9f9a-11ea-91a8-80faeb0bc788.png)
 
 ### Topic Model
 ```{r}
