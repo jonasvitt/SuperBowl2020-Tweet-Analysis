@@ -1,18 +1,6 @@
----
-title: "Sentiment Analysis Jeep"
-author: "Jonas Vitt"
-date: "2/5/2020"
-output: html_document
----
+# Initialication
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-
-# Initialization
-
-
+**Loading Packages**
 ```{r loading packages}
 library(tm)
 library(topicmodels)
@@ -22,14 +10,15 @@ library(dplyr)
 library(wordcloud)
 library(tidyverse)
 library(stringr)
-library(SnowballC)
 
 
 #sb_20 <- read.csv("flat_sb_2020.csv", stringsAsFactors = FALSE)
-#sb_20_red <- read.csv("2020-dataset-reduced-columns.csv", stringsAsFactors = FALSE)
+sb_20_red <- read.csv("2020-dataset-reduced-columns.csv", stringsAsFactors = FALSE)
 
 ```
 
+
+**Creating Functions for Plotting**
 ```{r wordcloud}
 
 create_wordcloud <- function(x)
@@ -96,31 +85,30 @@ create_topicmodel <- function(x, beschriftung)
 ```
 
 
-# Analysis
-
-
+# Data Cleaning
+**Filter for brand name**
 ```{r filtering for brands}
 #head(sb_20)
 #str(sb_20)
 
-jeep <- sb_20_red %>% 
-  filter(Brand == "Jeep") %>% 
+tide <- sb_20_red %>% 
+  filter(Brand == "Tide") %>% 
   select(text, AdTitle, Brand, sentiment, retweet_count) #%>% 
 
 ```
 
+**Data Cleaning**
 ```{r data cleaning}
 
 # regex for parsing tweets
 replace_reg <- "https?://[^\\s]+|&amp;|&lt;|&gt;|\bRT\\b|[^[:ascii:]]"
 
 # split into words
-words <- jeep %>%
-  filter(retweet_count == 0, ifelse(startsWith(text,"RT") == TRUE, FALSE, TRUE)) %>% # removes ca 10,000 tweets
+words <- tide  %>%
+  filter(ifelse(startsWith(text,"RT") == TRUE, FALSE, TRUE)) %>% # removes ca 10,000 tweets
   mutate(text = str_replace_all(text, replace_reg, ""),
          linenumber = row_number()) %>%
   unnest_tokens(word, text, token = "tweets")
-
 
 # remove stop words
 words <- words %>%
@@ -129,6 +117,7 @@ words <- words %>%
 
 ```
 
+**Data separation**
 ```{r data separation}
 
 # selection mentions
@@ -150,7 +139,9 @@ hashtags <- words  %>%
 # removing hashtags and mentions from data set
 words_clean <- words %>% 
   filter(ifelse(startsWith(word,"@") == TRUE, FALSE, TRUE), ifelse(startsWith(word,"#") == TRUE, FALSE, TRUE))
+```
 
+```{r}
 # stemming the words
 system.time(
   words_clean_stemmed <-words_clean %>%
@@ -159,7 +150,6 @@ system.time(
 words_clean_stemmed <- words_clean_stemmed %>% 
   select(-word) %>% 
   rename(word = word_stem)
-
 
 # Merging single words back to tweet
 tidy_tweets <- words_clean %>%
@@ -191,88 +181,105 @@ bigrams <- bigrams %>%
 
 ```
 
+**Aggregating words and bigrams**
 ```{r aggregating words and bigrams}
 
 words_count <- words_clean_stemmed %>%
    group_by(word) %>%
    count()
 
-jeep_words_arranged <- words_count %>%
+tide_words_arranged <- words_count %>%
    arrange(-n)
 
 bigrams_count <- bigrams %>%
    group_by(bigram) %>%
    count()
 
-jeep_bigrams_arranged <- bigrams_count %>%
+tide_bigrams_arranged <- bigrams_count %>%
    arrange(-n)
 
 ```
 
 
-```{r visualization}
+## Plotting
 
-# Barplot Top 10 Mentions
-excluded_mentions <- c("@jeep")
+### Barplot Top 10 Mentions
+```{r}
+excluded_mentions <- c("@tide")
 mentions %>% 
   filter(ifelse(word %in% excluded_mentions == TRUE, FALSE, TRUE))  %>%
   top_n(10) %>% 
   ggplot(aes(reorder(word,n), n, fill=word)) +
   geom_col()+
   coord_flip()+
-  labs(title="Top 10 Mentioned Accounts; Brand: Jeep",
+  labs(title="Top 10 Mentioned Accounts; Brand: Tide",
         x ="Mentioned Accounts", y = "Number of Occurence")+
-  theme(legend.position = "none")
+  theme(legend.position = "none") + 
+  theme_minimal()
+```
+![mentsions_tide](https://user-images.githubusercontent.com/63118478/82975158-f277bc00-9f98-11ea-917b-28562f08b491.png)
 
-
-# Barplot Top 10 Hashtags
-excluded_hashtags <- c("jeep|commercial|ad|im|superbowl|sbliv")
+### Barplot Top 10 Hashtags
+```{r}
+excluded_hashtags <- c("tide|superbowl|superbowlliv|superbowlads|superbowlad|superbowlcommercial|superbowl2020|sbliv|laundrylater|superbowlcommercials|adbowl|brandbowl|sbliv")
 hashtags %>% 
   filter(ifelse(str_detect(word, excluded_hashtags) == TRUE, FALSE, TRUE))  %>%
   top_n(10) %>% 
   ggplot(aes(reorder(word,n), n, fill=word)) +
   geom_col()+
   coord_flip()+
-  labs(title="Top 10 Used Hashtags; Brand: Jeep",
+  labs(title="Top 10 Used Hashtags; Brand: Tide",
         x ="Hashtags", y = "Number of Occurence")+
-  theme(legend.position = "none")
+  theme(legend.position = "none") + 
+  theme_minimal()
+```
+![hashtags_tide](https://user-images.githubusercontent.com/63118478/82974249-c2c7b480-9f96-11ea-965c-1d51ed693f7c.png)
 
-
-# Barplot Top 10 Words
-excluded_words <- c("jeep|commercial|ad|im|(super bowl)|bowl|super|commerci")
-jeep_words_arranged %>% 
+### Barplot Top 10 Words
+```{r}
+excluded_words <- c("tide|commercial|ad|im|(super bowl)|bowl|super|commerci")
+tide_words_arranged %>% 
   filter(ifelse(str_detect(word, excluded_words) == TRUE, FALSE, TRUE)) %>%
   head(n=10L) %>% 
   ggplot(aes(reorder(word,n), n, fill=word)) +
   geom_col()+
   coord_flip() +
-  labs(title="Top 10 Tweeted Words; Brand: Jeep",
+  labs(title="Top 10 Tweeted Words; Brand: Tide",
         x ="Word", y = "Number of Occurence")+
-  theme(legend.position = "none")
+  theme(legend.position = "none") + 
+  theme_minimal()
+```
+![words_tide](https://user-images.githubusercontent.com/63118478/82974253-c3604b00-9f96-11ea-89eb-ba138ab2098d.png)
 
-
-# Barplot Top 10 Bigrams
-jeep_bigrams_arranged %>%
+### Barplot Top 10 Bigrams
+```{r}
+tide_bigrams_arranged %>%
   filter(ifelse(str_detect(bigram, excluded_words) == TRUE, FALSE, TRUE)) %>% 
   head(n=10L) %>% 
   ggplot(aes(reorder(bigram,n), n,fill =bigram)) +
   geom_col()+
   coord_flip() +
-  labs(title="Top 10 Tweeted Word Pairs; Brand: Jeep",
+  labs(title="Top 10 Tweeted Word Pairs; Brand: Tide",
         x ="Word Pairs", y = "Number of Occurence")+
-  theme(legend.position = "none")
+  theme(legend.position = "none") + 
+  theme_minimal()
+```
+![word-pairs_tide](https://user-images.githubusercontent.com/63118478/82974252-c3604b00-9f96-11ea-8f41-e032dfe93f77.png)
 
-
+### Wordcloud
+```{r}
 wordcloud_data <- tidy_tweets_stemmed %>% 
     filter(ifelse(str_detect(text, excluded_words) == TRUE, FALSE, TRUE))
 
 create_wordcloud(wordcloud_data)
+```
+![wordcloud_tide](https://user-images.githubusercontent.com/63118478/82974251-c3604b00-9f96-11ea-95dd-33ab8077997b.png)
 
-
-
+### Topic Model
+```{r}
 tidy_tweets_stemmed %>% 
     filter(ifelse(str_detect(text, excluded_words) == TRUE, FALSE, TRUE)) %>% 
-  create_topicmodel(beschriftung="Topicmodel; Brand: Jeep")
-
+  create_topicmodel(beschriftung="Topicmodel; Brand: Tide") + 
+  theme_minimal()
 ```
-
+![topicmodel_tide](https://user-images.githubusercontent.com/63118478/82975126-decc5580-9f98-11ea-8e6e-24a69526f4f9.png)
