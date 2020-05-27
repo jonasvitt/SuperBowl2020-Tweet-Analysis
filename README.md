@@ -16,7 +16,9 @@ First, we found that a high tweet volume following a tweet, does not equal an ov
 
 
 ## Teammates
-The teams where between three and four students. Together with my teammates Adam Whalen, Matt Pecsok, and Colten Hoth we received third place in the graduate student category.
+* [Adam Whalen](https://www.linkedin.com/in/adam-whalen-591352107/)
+* [Matt Pecsok](https://www.linkedin.com/in/matthew-pecsok-69759767/)
+* [Colten Hoth](https://www.linkedin.com/in/colten-hoth-4b305830/)
 
 
 ## Organizer & Sponsors
